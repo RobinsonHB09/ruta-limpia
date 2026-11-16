@@ -178,7 +178,63 @@ export default function Page() {
     if (active === 'Jornadas') return <><PageTitle title="Registro de jornadas" description="Controla las jornadas realizadas por fecha, ruta y material." /><div className="filter-card"><label>Inicio<input type="date" defaultValue="2026-10-01" /></label><label>Fin<input type="date" defaultValue="2026-10-20" /></label><label>Ruta<select><option>Todas las rutas</option><option>Ruta Norte</option></select></label><button className="primary-button" onClick={() => notify('Jornada guardada')}>Guardar</button></div><Table><div className="table-head"><span>FECHA</span><span>RUTA</span><span>MATERIAL</span><span>CANTIDAD</span><span>OBSERVACIONES</span></div>{['20/10/2026','19/10/2026','18/10/2026','17/10/2026'].map((date, i) => <div className="table-row" key={date}><span>{date}</span><strong>{routes[i % 3].name}</strong><span>{i % 2 ? 'Reciclable' : 'Mixto'}</span><span>{18 + i * 4} kg</span><span>Jornada completada</span></div>)}</Table></>
     if (active === 'Historial') return <><PageTitle title="Historial de recolecciones" description="Consulta el registro histórico de puntos atendidos." /><div className="history-card"><div className="history-chart"><div className="chart-bars"><i style={{height:'45%'}} /><i style={{height:'70%'}} /><i style={{height:'54%'}} /><i style={{height:'88%'}} /><i style={{height:'66%'}} /><i style={{height:'96%'}} /><i style={{height:'78%'}} /></div><div className="chart-labels"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div></div><div className="history-total"><span>Total recuperado</span><strong>1,284 kg</strong><small>+18.6% frente al mes anterior</small></div></div><Table><div className="table-head"><span>FECHA</span><span>LUGAR DE RECOLECCIÓN</span><span>MATERIAL</span><span>CANTIDAD</span><span /></div>{['Centro Histórico','La Floresta','San Martín','Parque Central'].map((point, i) => <div className="table-row" key={point}><span>20/10/2026</span><strong>{point}</strong><span>Orgánico</span><span>{42 + i * 8} kg</span><ChevronRight /></div>)}</Table></>
     if (active === 'Reportes') return <><PageTitle title="Reportes generados" description="Analiza el rendimiento de la operación de recolección." action={<button className="outline-button" onClick={() => notify('Reporte descargado')}><Download /> Descargar PDF</button>} /><div className="report-kpis"><div><span>Jornadas</span><strong>24</strong><small>+8.2%</small></div><div><span>Material recuperado</span><strong>1,284 kg</strong><small>+18.6%</small></div><div><span>Recorridos</span><strong>38</strong><small>+12.1%</small></div></div><div className="report-panel"><div className="section-heading compact"><div><h2>Rendimiento mensual</h2><p>Material recuperado por semana</p></div></div><div className="big-chart"><div className="chart-line" /></div></div></>
-    if (active === 'Notificaciones') return <><PageTitle title="Centro de notificaciones" description="Mantente informado sobre recorridos, alertas y novedades." action={<button className={`alert-button ${alerts ? 'enabled' : ''}`} onClick={() => setAlerts(!alerts)}><Bell /> {alerts ? 'Alertas activadas' : 'Activar alertas'}<span className="toggle"><span /></span></button>} /><div className="notification-page-list">{[['El camión se acerca','Ruta Norte está a 1.2 km de Centro Histórico.','Hace 2 min',Truck],['Jornada completada','Se registraron 42 kg en La Floresta.','Hace 18 min',Recycle],['Nueva ruta programada','Ruta Centro inicia hoy a las 10:30 h.','Hace 1 h',CalendarDays]].map(([title, text, time, Icon]) => <div className="notification-page-item" key={String(title)}><span className="notif-icon"><Icon /></span><div><strong>{title}</strong><p>{text}</p><small>{time}</small></div><button onClick={() => notify('Notificación marcada como leída')}>Marcar leída</button></div>)}</div></>
+    if (active === 'Notificaciones') return (
+  <>
+    <PageTitle
+      title="Centro de notificaciones"
+      description="Mantente informado sobre recorridos, alertas y novedades."
+      action={
+        <button
+          className={`alert-button ${alerts ? 'enabled' : ''}`}
+          onClick={() => setAlerts(!alerts)}
+        >
+          <Bell />
+          {alerts ? 'Alertas activadas' : 'Activar alertas'}
+          <span className="toggle"><span /></span>
+        </button>
+      }
+    />
+
+    <div className="notification-page-list">
+      {([
+        [
+          'El camión se acerca',
+          'Ruta Norte está a 1.2 km de Centro Histórico.',
+          'Hace 2 min',
+          Truck
+        ],
+        [
+          'Jornada completada',
+          'Se registraron 42 kg en La Floresta.',
+          'Hace 18 min',
+          Recycle
+        ],
+        [
+          'Nueva ruta programada',
+          'Ruta Centro inicia hoy a las 10:30 h.',
+          'Hace 1 h',
+          CalendarDays
+        ]
+      ] as const).map(([title, text, time, Icon]) => (
+        <div className="notification-page-item" key={title}>
+          <span className="notif-icon">
+            <Icon />
+          </span>
+
+          <div>
+            <strong>{title}</strong>
+            <p>{text}</p>
+            <small>{time}</small>
+          </div>
+
+          <button onClick={() => notify('Notificación marcada como leída')}>
+            Marcar leída
+          </button>
+        </div>
+      ))}
+    </div>
+  </>
+)
     return <><PageTitle title="Perfil de usuario" description="Administra tus datos y preferencias de la plataforma." /><div className="profile-panel"><div className="profile-large">MG</div><div><h3>María González</h3><p>Coordinadora de operaciones</p><span>maria.gonzalez@r limpia.co</span></div><button className="outline-button" onClick={() => notify('Modo edición activado')}>Editar perfil</button></div><div className="settings-list"><button><UserRound /><span><strong>Información personal</strong><small>Nombre, correo y teléfono</small></span><ChevronRight /></button><button><Bell /><span><strong>Preferencias de alertas</strong><small>Notificaciones de recorridos</small></span><ChevronRight /></button><button><Settings2 /><span><strong>Configuración</strong><small>Zona, idioma y privacidad</small></span><ChevronRight /></button></div></>
   }
 
